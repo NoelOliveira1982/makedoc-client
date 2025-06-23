@@ -34,6 +34,35 @@ export interface ErrorResponse {
   detail?: string;
 }
 
+// --- Tipos de Admin ---
+export interface ApiKey {
+  key: string;
+  name: string;
+  quantity: number;
+  is_active: boolean;
+  created_at: string;
+  last_used?: string;
+}
+
+export interface LogEntry {
+  api_key: string;
+  source: string;
+  file_size_bytes: number;
+  generation_time_ms: number;
+  created_at: string;
+  success: boolean;
+  error_message?: string;
+}
+
+export interface SummaryStats {
+  period_days: number;
+  total_requests: number;
+  successful_requests: number;
+  failed_requests: number;
+  success_rate: number;
+  average_generation_time_ms: number;
+}
+
 // Serviços da API
 export const apiService = {
   // Gerar PDF e retornar em base64 (ideal para frontend)
@@ -63,6 +92,22 @@ export const apiService = {
   // Testar conexão com a API
   testConnection: async () => {
     const response = await api.get('/');
+    return response.data;
+  },
+
+  // --- Serviços de Admin (reais) ---
+  getAdminLogs: async (): Promise<LogEntry[]> => {
+    const response = await api.get('/admin/logs');
+    return response.data;
+  },
+
+  getSummaryStats: async (): Promise<SummaryStats> => {
+    const response = await api.get('/admin/logs/summary');
+    return response.data;
+  },
+
+  getApiKeys: async (): Promise<ApiKey[]> => {
+    const response = await api.get('/admin/api-keys');
     return response.data;
   },
 };
