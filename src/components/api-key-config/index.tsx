@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './styles.css';
 
 interface ApiKeyConfigProps {
   onApiKeySet: (apiKey: string) => void;
@@ -9,7 +10,6 @@ const ApiKeyConfig: React.FC<ApiKeyConfigProps> = ({ onApiKeySet }) => {
   const [isValid, setIsValid] = useState(false);
 
   useEffect(() => {
-    // Carregar API key salva no localStorage
     const savedApiKey = localStorage.getItem('apiKey');
     if (savedApiKey) {
       setApiKey(savedApiKey);

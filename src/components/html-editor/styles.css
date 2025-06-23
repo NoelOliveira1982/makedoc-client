@@ -1,0 +1,91 @@
+/* HTML Editor */
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.editor-controls {
+  flex-shrink: 0;
+}
+
+.templates-section {
+  margin-bottom: 1.5rem;
+}
+
+.templates-section h4 {
+  margin-bottom: 0.75rem;
+  color: #495057;
+}
+
+.template-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.editor-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.editor-content.with-preview {
+  grid-template-columns: 1fr 1fr;
+}
+
+.editor-panel,
+.preview-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
+.editor-panel label,
+.preview-panel label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.html-textarea {
+  flex: 1;
+  padding: 1rem;
+  border: 2px solid #e1e8ed;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  resize: vertical;
+  min-height: 300px;
+}
+
+.html-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.html-preview {
+  flex: 1;
+  padding: 1rem;
+  border: 2px solid #e1e8ed;
+  border-radius: 6px;
+  background: #f8f9fa;
+  min-height: 300px;
+  overflow-y: auto;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .editor-content {
+    grid-template-columns: 1fr;
+  }
+
+  .template-buttons {
+    flex-direction: column;
+  }
+}

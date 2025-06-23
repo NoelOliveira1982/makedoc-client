@@ -1,0 +1,39 @@
+/* PDF Generator */
+.generator-controls {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.pdf-result {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+}
+
+.pdf-info {
+  margin-bottom: 1rem;
+}
+
+.pdf-info p {
+  margin-bottom: 0.25rem;
+}
+
+.pdf-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .generator-controls {
+    flex-direction: column;
+  }
+
+  .pdf-actions {
+    flex-direction: column;
+  }
+}

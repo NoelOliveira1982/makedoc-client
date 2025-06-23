@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { apiService } from '../services/api';
-import type { PDFResponse } from '../services/api';
+import { apiService } from '../../services/api';
+import type { PDFResponse } from '../../services/api';
+import './styles.css';
 
 interface PdfGeneratorProps {
   htmlContent: string;

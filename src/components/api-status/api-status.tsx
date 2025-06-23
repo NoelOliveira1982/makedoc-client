@@ -1,5 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { apiService } from '../services/api';
+import { apiService } from '../../services/api';
+import './styles.css';
+
+interface Error {
+  status: 'offline' | 'error';
+  message: string;
+}
+
+interface StatusConfig {
+  online: { color: string; icon: string };
+  offline: { color: string; icon: string };
+  error: { color: string; icon: string };
+  checking: { color: string; icon: string };
+}
+
+const handleError: Record<string | number, Error> = {
+  'ERR_NETWORK': {
+    status: 'offline',
+    message: 'API não está acessível. Verifique se está rodando em http://localhost:8000',
+  },
+  401: {
+    status: 'error',
+    message: 'API está online, mas requer API key válida.',
+  },
+  405: {
+    status: 'error',
+    message: 'Método não permitido. URL: {url}, Método: {method}',
+  }
+} as const;
+
+const statusConfig: StatusConfig = {
+  online: { color: 'green', icon: '✓' },
+  offline: { color: 'red', icon: '✗' },
+  error: { color: 'orange', icon: '⚠' },
+  checking: { color: 'blue', icon: '⟳' }
+} as const;
 
 const ApiStatus: React.FC = () => {
   const [status, setStatus] = useState<'checking' | 'online' | 'offline' | 'error'>('checking');
@@ -11,11 +46,9 @@ const ApiStatus: React.FC = () => {
     setMessage('Verificando conexão...');
 
     try {
-      // Testar conexão básica
       const connectionTest = await apiService.testConnection();
       console.log('Conexão básica:', connectionTest);
 
-      // Obter informações da API
       const info = await apiService.getAPIInfo();
       setApiInfo(info);
 
@@ -23,23 +56,9 @@ const ApiStatus: React.FC = () => {
       setMessage('API está online e funcionando!');
     } catch (err: any) {
       console.error('Erro ao verificar API:', err);
-      console.error('Status:', err.response?.status);
-      console.error('URL:', err.config?.url);
-      console.error('Method:', err.config?.method);
 
-      if (err.code === 'ERR_NETWORK') {
-        setStatus('offline');
-        setMessage('API não está acessível. Verifique se está rodando em http://localhost:8000');
-      } else if (err.response?.status === 401) {
-        setStatus('error');
-        setMessage('API está online, mas requer API key válida.');
-      } else if (err.response?.status === 405) {
-        setStatus('error');
-        setMessage(`Erro 405: Método não permitido. URL: ${err.config?.url}, Método: ${err.config?.method}`);
-      } else {
-        setStatus('error');
-        setMessage(`Erro: ${err.message || 'Erro desconhecido'}`);
-      }
+      setStatus(handleError[err.response?.status]?.status || 'error');
+      setMessage(handleError[err.response?.status]?.message || 'Erro desconhecido');
     }
   };
 
@@ -48,23 +67,11 @@ const ApiStatus: React.FC = () => {
   }, []);
 
   const getStatusColor = () => {
-    switch (status) {
-      case 'online': return 'green';
-      case 'offline': return 'red';
-      case 'error': return 'orange';
-      case 'checking': return 'blue';
-      default: return 'gray';
-    }
+    return statusConfig[status]?.color || 'gray';
   };
 
   const getStatusIcon = () => {
-    switch (status) {
-      case 'online': return '✓';
-      case 'offline': return '✗';
-      case 'error': return '⚠';
-      case 'checking': return '⟳';
-      default: return '?';
-    }
+    return statusConfig[status]?.icon || '?';
   };
 
   return (
