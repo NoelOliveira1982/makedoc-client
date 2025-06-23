@@ -1,26 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAppContext } from '../../hooks/useAppContext';
 import { templates } from './templates';
+import SafePreview from './safe-preview';
 import './styles.css';
 
 interface HtmlEditorProps {
-  onHtmlChange: (html: string) => void;
   initialHtml?: string;
 }
 
-const HtmlEditor: React.FC<HtmlEditorProps> = ({ onHtmlChange, initialHtml = '' }) => {
-  const [html, setHtml] = useState(initialHtml);
+const HtmlEditor: React.FC<HtmlEditorProps> = ({ initialHtml = '' }) => {
+  const { htmlContent, setHtmlContent } = useAppContext();
+  const [localHtml, setLocalHtml] = useState(initialHtml);
   const [showPreview, setShowPreview] = useState(false);
+
+  useEffect(() => {
+    if (htmlContent !== localHtml) {
+      setLocalHtml(htmlContent || initialHtml);
+    }
+  }, [htmlContent, initialHtml]);
 
   const handleHtmlChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newHtml = e.target.value;
-    setHtml(newHtml);
-    onHtmlChange(newHtml);
+    setLocalHtml(newHtml);
+    setHtmlContent(newHtml);
   };
 
   const insertTemplate = (template: string) => {
-    const newHtml = html + template;
-    setHtml(newHtml);
-    onHtmlChange(newHtml);
+    const newHtml = localHtml + template;
+    setLocalHtml(newHtml);
+    setHtmlContent(newHtml);
   };
 
   return (
@@ -57,7 +65,7 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ onHtmlChange, initialHtml = '' 
           <label htmlFor="htmlEditor">HTML:</label>
           <textarea
             id="htmlEditor"
-            value={html}
+            value={localHtml}
             onChange={handleHtmlChange}
             placeholder="Digite ou cole seu HTML aqui..."
             className="html-textarea"
@@ -68,10 +76,7 @@ const HtmlEditor: React.FC<HtmlEditorProps> = ({ onHtmlChange, initialHtml = '' 
         {showPreview && (
           <div className="preview-panel">
             <label>Preview:</label>
-            <div
-              className="html-preview"
-              dangerouslySetInnerHTML={{ __html: html }}
-            />
+            <SafePreview htmlContent={localHtml} className="html-preview" />
           </div>
         )}
       </div>

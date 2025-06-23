@@ -71,12 +71,7 @@
 
 .html-preview {
   flex: 1;
-  padding: 1rem;
-  border: 2px solid #e1e8ed;
-  border-radius: 6px;
-  background: #f8f9fa;
   min-height: 300px;
-  overflow-y: auto;
 }
 
 /* Responsividade */

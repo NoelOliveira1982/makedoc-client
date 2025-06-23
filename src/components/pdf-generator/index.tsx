@@ -1,12 +1,8 @@
 import React, { useState } from 'react';
+import { useAppContext } from '../../hooks/useAppContext';
 import { apiService } from '../../services/api';
 import type { PDFResponse } from '../../services/api';
 import './styles.css';
-
-interface PdfGeneratorProps {
-  htmlContent: string;
-  apiKey: string;
-}
 
 interface Error {
   message: string;
@@ -24,7 +20,8 @@ const handleError: Record<string | number, Error> = {
   }
 }
 
-const PdfGenerator: React.FC<PdfGeneratorProps> = ({ htmlContent, apiKey }) => {
+const PdfGenerator: React.FC = () => {
+  const { htmlContent, apiKey } = useAppContext();
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);

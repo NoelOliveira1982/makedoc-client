@@ -1,36 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useAppContext } from '../../hooks/useAppContext';
 import './styles.css';
 
-interface ApiKeyConfigProps {
-  onApiKeySet: (apiKey: string) => void;
-}
-
-const ApiKeyConfig: React.FC<ApiKeyConfigProps> = ({ onApiKeySet }) => {
-  const [apiKey, setApiKey] = useState('');
-  const [isValid, setIsValid] = useState(false);
-
-  useEffect(() => {
-    const savedApiKey = localStorage.getItem('apiKey');
-    if (savedApiKey) {
-      setApiKey(savedApiKey);
-      setIsValid(true);
-      onApiKeySet(savedApiKey);
-    }
-  }, [onApiKeySet]);
+const ApiKeyConfig: React.FC = () => {
+  const { apiKey, setApiKey, isApiKeyValid, clearApiKey } = useAppContext();
+  const [localApiKey, setLocalApiKey] = useState(apiKey);
 
   const handleSaveApiKey = () => {
-    if (apiKey.trim()) {
-      localStorage.setItem('apiKey', apiKey);
-      setIsValid(true);
-      onApiKeySet(apiKey);
+    if (localApiKey.trim()) {
+      setApiKey(localApiKey);
     }
   };
 
   const handleClearApiKey = () => {
-    localStorage.removeItem('apiKey');
-    setApiKey('');
-    setIsValid(false);
-    onApiKeySet('');
+    setLocalApiKey('');
+    clearApiKey();
   };
 
   return (
@@ -41,20 +25,20 @@ const ApiKeyConfig: React.FC<ApiKeyConfigProps> = ({ onApiKeySet }) => {
         <input
           type="password"
           id="apiKey"
-          value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
+          value={localApiKey}
+          onChange={(e) => setLocalApiKey(e.target.value)}
           placeholder="Digite sua API key"
           className="api-key-field"
         />
         <div className="api-key-buttons">
           <button
             onClick={handleSaveApiKey}
-            disabled={!apiKey.trim()}
+            disabled={!localApiKey.trim()}
             className="btn btn-primary"
           >
             Salvar
           </button>
-          {isValid && (
+          {isApiKeyValid && (
             <button
               onClick={handleClearApiKey}
               className="btn btn-secondary"
@@ -64,7 +48,7 @@ const ApiKeyConfig: React.FC<ApiKeyConfigProps> = ({ onApiKeySet }) => {
           )}
         </div>
       </div>
-      {isValid && (
+      {isApiKeyValid && (
         <div className="api-key-status success">
           ✓ API Key configurada
         </div>
