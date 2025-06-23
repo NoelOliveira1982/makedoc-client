@@ -8,6 +8,22 @@ interface PdfGeneratorProps {
   apiKey: string;
 }
 
+interface Error {
+  message: string;
+}
+
+const handleError: Record<string | number, Error> = {
+  401: {
+    message: 'API Key inválida ou não fornecida.',
+  },
+  403: {
+    message: 'API Key não autorizada.',
+  },
+  405: {
+    message: 'Método não permitido. URL: {url}, Método: {method}',
+  }
+}
+
 const PdfGenerator: React.FC<PdfGeneratorProps> = ({ htmlContent, apiKey }) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,22 +52,8 @@ const PdfGenerator: React.FC<PdfGeneratorProps> = ({ htmlContent, apiKey }) => {
       setSuccess('PDF gerado com sucesso!');
     } catch (err: any) {
       console.error('Erro ao gerar PDF:', err);
-      console.error('Status:', err.response?.status);
-      console.error('URL:', err.config?.url);
-      console.error('Method:', err.config?.method);
-      console.error('Headers:', err.config?.headers);
 
-      if (err.response?.status === 401) {
-        setError('API Key inválida ou não fornecida.');
-      } else if (err.response?.status === 403) {
-        setError('API Key não autorizada.');
-      } else if (err.response?.status === 405) {
-        setError(`Erro 405: Método não permitido. URL: ${err.config?.url}, Método: ${err.config?.method}`);
-      } else if (err.response?.data?.detail) {
-        setError(`Erro: ${err.response.data.detail}`);
-      } else {
-        setError(`Erro ao gerar PDF. Status: ${err.response?.status}. Verifique se a API está rodando.`);
-      }
+      setError(handleError[err.response?.status]?.message || 'Erro desconhecido');
     } finally {
       setIsGenerating(false);
     }
@@ -88,20 +90,8 @@ const PdfGenerator: React.FC<PdfGeneratorProps> = ({ htmlContent, apiKey }) => {
       setSuccess('PDF baixado com sucesso!');
     } catch (err: any) {
       console.error('Erro ao baixar PDF:', err);
-      console.error('Status:', err.response?.status);
-      console.error('URL:', err.config?.url);
-      console.error('Method:', err.config?.method);
-      console.error('Headers:', err.config?.headers);
 
-      if (err.response?.status === 401) {
-        setError('API Key inválida ou não fornecida.');
-      } else if (err.response?.status === 403) {
-        setError('API Key não autorizada.');
-      } else if (err.response?.status === 405) {
-        setError(`Erro 405: Método não permitido. URL: ${err.config?.url}, Método: ${err.config?.method}`);
-      } else {
-        setError(`Erro ao baixar PDF. Status: ${err.response?.status}. Verifique se a API está rodando.`);
-      }
+      setError(handleError[err.response?.status]?.message || 'Erro desconhecido');
     } finally {
       setIsGenerating(false);
     }
